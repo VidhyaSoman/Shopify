@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="/stylesheets/addProduct.css">
+<link rel="stylesheet" href="/stylesheets/sidebar.css">
+
+{{!-- {{>navbar}} --}}
+<div class="nav">
+  <h4>Add Product</h4>
+<a href="#" class="logout">LOGOUT</a>
+</div>
+<header class="add">
+</header>
+{{!-- <h3 class="page-title">Add Product</h3> --}}
+<main class="add">
+  <form method="post" action="/admin/addproduct" enctype="multipart/form-data">
+    <div>
+      <label>Product Name</label>
+      <input class="add" name="name" required/>
+    </div>
+    <div>
+      <label>
+        <span>Price</span>
+      </label>
+      <input type="text" min="0" class="add" name="price" required/>
+    </div>
+    <div>
+      <label>
+        <span>Offer</span>
+      </label>
+      <input type="number" min="0" class="add" name="offer" required/>
+    </div>
+    <div>
+      <label>
+        <span>Description</span>
+      </label>
+      <input type="text"  class="add" required name="description">
+    </div>
+    <div>
+      <label>
+        <span>Image</span>
+      </label>
+      <div class="image-input">
+        <input type="file" name="image" required class="choose "> 
+      </div>
+    </div>
+    <div>
+      <input type="submit" value="ADD" class="button">
+    </div>
+  </form>
+</main>

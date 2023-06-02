@@ -1,0 +1,43 @@
+
+<style>
+    .main
+    {
+        width: 65%;
+        height: 300px;
+        box-shadow: rgba(23, 30, 104, 0.35) 0px 5px 15px;
+        margin: auto;
+        margin-top: 70px;
+        display: flex;
+        border-radius: 5px;
+    }
+    .imageDivision
+    {
+        width: 50%;
+        height: 100%;
+        padding: 20px;
+    }
+    .imageDivision img{
+        height: 100%;
+        width: 60%;
+    }
+    .contentDivision
+    {
+        padding: 20px;
+    }
+</style>
+
+{{>navbar}}
+
+<div class="main">
+<div class="imageDivision">
+    <img src="/images/Products/{{product._id}}" alt="....">
+</div>
+<div class="contentDivision">
+    <h3>{{product.name}}</h3><br>
+    <h6>{{product.description}}</h6><br>
+    <h3>{{product.price}}</h3><br>
+    {{!-- <a href="/"><button class="bn632-hover bn28">Button</button></a> --}}
+    <a href="/checkout/{{product.price}}/{{product.id}}"><button class="btn btn-primary">Check Out</button></a>
+    <a href="#"><button class="btn btn-danger">Cancel</button></a>
+</div>
+</div>
