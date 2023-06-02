@@ -2,6 +2,7 @@ var con = require('../config/config')
 const userModel = require('../Models/userModel')
 let Razorpay = require('../Payments/Razorpay')
 let productModel = require('../Models/productModel');
+let cartModel = require('../Models/cartModel');
 
 const getHomePage = async (req,res)=>{
     try {
@@ -20,11 +21,6 @@ const getHomePage = async (req,res)=>{
     }
     
 
-    
-    // if(product.length>0)
-    // {
-        
-    // }
     // let sql= "select * from products"
     // con.query(sql,(err,row) =>
     // {
@@ -114,52 +110,89 @@ const getMyOrder = (req,res) =>
     res.render('users/myOrder',{user});
 }
 
-const addtocart = (req,res) =>
+const addtocart = async (req,res) =>
 {
-    let productid = req.params.pid;
-    let userid = req.session.user.id;
-    let qry1 = "select * from cart where productid = ? and userid = ?"
-    con.query(qry1,[productid,userid],(err,result) =>{
-        if(err)
+    let {id} = req.params;
+    let {user} = req.session;
+    try {
+        let product = await productModel.findOne({_id:id});
+        product.id = id;
+        let obj = {
+            item:product,
+            quantity: 1
+        }
+        let cart = await cartModel.findOne({userId: user._id})
+        if(cart)
         {
-            console.log(err)
-        }
-        else{
-            if(result.length>0)
+            console.log(cart);
+            let proExist = cart.products.findIndex(product => product.item._id == id)
+            console.log(proExist);
+            if(proExist != -1)
             {
-                var qty = result[0].qty;
-                let cartId = result[0].id;
-                qty = parseInt(qty)+1;
-                let qry2 = "update cart set qty = ? where id = ?"
-                con.query(qry2,[qty,cartId],(err,row)=>
+                await cartModel.findOneAndUpdate({
+                    "product.item._id": product._id
+                },
                 {
-                    if(err)
-                    {
-                        console.log(err)
-                    }
-                    else{
-                        res.redirect('/')
-                    }
+                    $inc: {'products.$.quantity':1}
                 })
-            }
-            else{
-                let qry3 = "insert into cart set ?"
-                let data ={
-                    productid,
-                    userid
-                }
-                con.query(qry3,data,(err,result)=>{
-                    if(err)
-                    {
-                        console.log(err)
-                    }
-                    else{
-                        res.redirect('/')
-                    }
-                })
+                // res.redirect("/users/cart")
             }
         }
-    })
+        else
+        {
+            let cartObj = {
+                userId : user._id,
+                products : [obj] 
+            }
+            console.log("cart",cartObj)
+            await cartModel.create(cartObj);
+            // res.redirect("/users/cart")
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    // let qry1 = "select * from cart where productid = ? and userid = ?"
+    // con.query(qry1,[productid,userid],(err,result) =>{
+    //     if(err)
+    //     {
+    //         console.log(err)
+    //     }
+    //     else{
+    //         if(result.length>0)
+    //         {
+    //             var qty = result[0].qty;
+    //             let cartId = result[0].id;
+    //             qty = parseInt(qty)+1;
+    //             let qry2 = "update cart set qty = ? where id = ?"
+    //             con.query(qry2,[qty,cartId],(err)=>
+    //             {
+    //                 if(err)
+    //                 {
+    //                     console.log(err)
+    //                 }
+    //                 else{
+    //                     res.redirect('/')
+    //                 }
+    //             })
+    //         }
+    //         else{
+    //             let qry3 = "insert into cart set ?"
+    //             let data ={
+    //                 productid,
+    //                 userid
+    //             }
+    //             con.query(qry3,data,(err)=>{
+    //                 if(err)
+    //                 {
+    //                     console.log(err)
+    //                 }
+    //                 else{
+    //                     res.redirect('/')
+    //                 }
+    //             })
+    //         }
+    //     }
+    // })
 }
 
 const buyNow = async (req,res) =>{
@@ -209,7 +242,7 @@ const checkOut = (req,res) =>{
     });
 }
 
-const payVerify = async(req,res) =>
+const payVerify = async(req) =>
 {
     console.log(req.body);
     let data = req.body;
