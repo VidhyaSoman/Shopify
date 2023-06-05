@@ -110,10 +110,14 @@ const getMyOrder = (req,res) =>
     res.render('users/myOrder',{user});
 }
 
+
+
 const addtocart = async (req,res) =>
 {
     let {id} = req.params;
+    console.log(id,"id addtocaty")
     let {user} = req.session;
+    console.log(user,'user');
     try {
         let product = await productModel.findOne({_id:id});
         product.id = id;
@@ -124,20 +128,31 @@ const addtocart = async (req,res) =>
         let cart = await cartModel.findOne({userId: user._id})
         if(cart)
         {
-            console.log(cart);
-            let proExist = cart.products.findIndex(product => product.item._id == id)
-            console.log(proExist);
-            if(proExist != -1)
-            {
-                await cartModel.findOneAndUpdate({
-                    "product.item._id": product._id
-                },
-                {
-                    $inc: {'products.$.quantity':1}
-                })
-                // res.redirect("/users/cart")
-            }
-        }
+            let  proExist=0;
+            console.log(cart.products);
+            
+            cart.products.forEach(async(obj)=>{
+                    if(obj.item._id == id){
+                        console.log(obj.item._id,"item found!")
+                         proExist=1;
+                         console.log(obj.quantity,"qtyt...")
+                         var newqty = parseInt(obj.quantity)+ 1 ;
+                        let update = await cartModel.findOneAndUpdate({'products.item._id':id},{$set:{quantity:newqty}}) 
+                    }else{
+                        console.log(obj.item._id,"item not found!") 
+                                var  updation = await cartModel.findOneAndUpdate({ userId: user._id },
+                            {
+                                $push: {
+                                    products: obj
+                                }
+                            }
+                        )
+                        proExist=0;
+                    }
+            })
+      
+           
+        } 
         else
         {
             let cartObj = {
@@ -151,6 +166,7 @@ const addtocart = async (req,res) =>
     } catch (error) {
         console.log(error);
     }
+}
     // let qry1 = "select * from cart where productid = ? and userid = ?"
     // con.query(qry1,[productid,userid],(err,result) =>{
     //     if(err)
@@ -193,6 +209,11 @@ const addtocart = async (req,res) =>
     //         }
     //     }
     // })
+
+
+const cartPage = (req,res) =>
+{
+    res.render('users/cartPage');
 }
 
 const buyNow = async (req,res) =>{
@@ -279,5 +300,6 @@ module.exports = {
     addtocart,
     checkOut,
     payVerify,
-    buyNow
+    buyNow,
+    cartPage
 }

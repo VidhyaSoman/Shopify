@@ -12,7 +12,8 @@ var {
   buyNow,
   getlogout,
   checkOut,
-  payVerify
+  payVerify,
+  cartPage
 } = require('../controllers/userController')
 
 /* GET home page. */
@@ -29,5 +30,6 @@ router.get('/buynow/:id',checkUser,buyNow);
 router.get('/checkout/:price/:id',checkUser,checkOut)
 router.post('/verify',payVerify);
 router.get('/logout',getlogout);
+router.get('/cart',cartPage)
 
 module.exports = router;
