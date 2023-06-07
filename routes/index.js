@@ -27,7 +27,7 @@ router.post('/register',doRegister);
 router.post('/login',doLogin);
 router.get('/addtoCart/:id',addtocart);
 router.get('/buynow/:id',checkUser,buyNow);
-router.get('/checkout/:price/:id',checkUser,checkOut)
+router.get('/checkout/:price',checkUser,checkOut)
 router.post('/verify',payVerify);
 router.get('/logout',getlogout);
 router.get('/cart',cartPage)

@@ -4,23 +4,27 @@ let Razorpay = require('../Payments/Razorpay')
 let productModel = require('../Models/productModel');
 let cartModel = require('../Models/cartModel');
 
-const getHomePage = async (req,res)=>{
-    try {
-        let product = await productModel.find();
-        if(req.session.user)
-        {
-        let user = req.session.user;
-        res.render('index',{user,product});    
-        }
-        else{
+const getHomePage = async(req,res)=>{
+    let product = await productModel.find();
+     if(req.session.user){
         console.log(product);
-        res.render('index',{product});
-        }
-    } catch (error) {
-        console.log(error);
-    }
+         let user = req.session.user;
+         let cart = await cartModel.findOne({userId:user._id})
+         if(cart){
+            console.log(cart,"from cart")
+            let count = cart.products.length;
+            console.log(count,'....')
+            res.render('index',{user,product,count});
+         }else{
+            res.render('index',{user,product});
+         }
+         
+         
+     }else{
+         res.render('index',{product});
+     }
     
-
+    }
     // let sql= "select * from products"
     // con.query(sql,(err,row) =>
     // {
@@ -55,7 +59,7 @@ const getHomePage = async (req,res)=>{
     //         }
     //     }
     // }) 
-}
+
 
 const getLoginPage = (req,res) => {
     res.render('users/login');
@@ -111,109 +115,132 @@ const getMyOrder = (req,res) =>
 }
 
 
-
-const addtocart = async (req,res) =>
+const addtocart = async (req,res)=>
 {
-    let {id} = req.params;
-    console.log(id,"id addtocaty")
-    let {user} = req.session;
-    console.log(user,'user');
+     let {user} = req.session;
+     let {id} = req.params;
     try {
-        let product = await productModel.findOne({_id:id});
+        let product = await productModel.findOne({_id: id});
         product.id = id;
-        let obj = {
+        console.log(product,"product details");
+        let obj ={
             item:product,
-            quantity: 1
+            quantity:1
         }
-        let cart = await cartModel.findOne({userId: user._id})
-        if(cart)
-        {
-            let  proExist=0;
-            console.log(cart.products);
-            
-            cart.products.forEach(async(obj)=>{
-                    if(obj.item._id == id){
-                        console.log(obj.item._id,"item found!")
-                         proExist=1;
-                         console.log(obj.quantity,"qtyt...")
-                         var newqty = parseInt(obj.quantity)+ 1 ;
-                        let update = await cartModel.findOneAndUpdate({'products.item._id':id},{$set:{quantity:newqty}}) 
-                    }else{
-                        console.log(obj.item._id,"item not found!") 
-                                var  updation = await cartModel.findOneAndUpdate({ userId: user._id },
-                            {
-                                $push: {
-                                    products: obj
-                                }
-                            }
-                        )
-                        proExist=0;
-                    }
-            })
-      
-           
-        } 
-        else
-        {
+        let cart = await cartModel.findOne({userId:user._id})
+        if(cart){
+            console.log(cart,"cart item details");
+            cart.products.forEach(async obj => {
+                if(obj.item._id ==id){
+                    console.log("Item found")
+                    var newqty = obj.quantity;
+                     newqty++;
+                     console.log(newqty);
+                    res.redirect('/')
+                }
+                else{
+                    console.log("not found!")
+                    await cartModel.findOneAndUpdate({ userId: user._id },{$push: {products: obj}})
+                    res.redirect('/')
+                }  
+         });
+         }else{
             let cartObj = {
-                userId : user._id,
-                products : [obj] 
-            }
+                userId:user._id,
+                products:[obj]
+            } 
             console.log("cart",cartObj)
             await cartModel.create(cartObj);
-            // res.redirect("/users/cart")
+            res.redirect('/')
+         }     
         }
-    } catch (error) {
-        console.log(error);
+        catch(error){
+            console.log(error)
+        }    
     }
-}
-    // let qry1 = "select * from cart where productid = ? and userid = ?"
-    // con.query(qry1,[productid,userid],(err,result) =>{
-    //     if(err)
+
+
+
+
+// const addtocart = async (req,res) =>
+// {
+//     let {id} = req.params;
+//     console.log(id,"id addtocaty")
+//     let {user} = req.session;
+//     console.log(user,'user');
+    // try {
+    //     let product = await productModel.findOne({_id:id});
+    //     product.id = id;
+    //     let obj = {
+    //         item:product,
+    //         quantity: 1
+    //     }
+    //     let cart = await cartModel.findOne({userId: user._id})
+    //     if(cart)
     //     {
-    //         console.log(err)
-    //     }
-    //     else{
-    //         if(result.length>0)
-    //         {
-    //             var qty = result[0].qty;
-    //             let cartId = result[0].id;
-    //             qty = parseInt(qty)+1;
-    //             let qry2 = "update cart set qty = ? where id = ?"
-    //             con.query(qry2,[qty,cartId],(err)=>
-    //             {
-    //                 if(err)
-    //                 {
-    //                     console.log(err)
+    //         let  proExist=0;
+    //         console.log(cart.products);  
+    //         cart.products.forEach(async(obj)=>{
+    //                 if(obj.item._id == id){
+    //                     console.log(obj.item._id,"item found!")
+    //                      proExist=1;
+    //                      console.log(obj.quantity,"qtyt...")
+    //                      var newqty = parseInt(obj.quantity)+ 1 ;
+    //                     let update = await cartModel.findOneAndUpdate({'products.item._id':id},{$set:{quantity:newqty}}) 
+    //                 }else{
+    //                     console.log(obj.item._id,"item not found!") 
+    //                             var  updation = await cartModel.findOneAndUpdate({ userId: user._id },
+    //                         {
+    //                             $push: {
+    //                                 products: obj
+    //                             }
+    //                         }
+    //                     )
+    //                     proExist=0;
     //                 }
-    //                 else{
-    //                     res.redirect('/')
-    //                 }
-    //             })
+    //         })
+      
+           
+    //     } 
+    //     else
+    //     {
+    //         let cartObj = {
+    //             userId : user._id,
+    //             products : [obj] 
     //         }
-    //         else{
-    //             let qry3 = "insert into cart set ?"
-    //             let data ={
-    //                 productid,
-    //                 userid
-    //             }
-    //             con.query(qry3,data,(err)=>{
-    //                 if(err)
-    //                 {
-    //                     console.log(err)
-    //                 }
-    //                 else{
-    //                     res.redirect('/')
-    //                 }
-    //             })
-    //         }
+    //         console.log("cart",cartObj)
+    //         await cartModel.create(cartObj);
+    //         // res.redirect("/users/cart")
     //     }
-    // })
+    // } catch (error) {
+    //     console.log(error);
+    // }
 
 
-const cartPage = (req,res) =>
+
+const cartPage = async (req,res) =>
 {
-    res.render('users/cartPage');
+    let {user} = req.session;
+    try {
+        let cart = await cartModel.findOne({userId:user._id});
+        console.log(cart);
+        let product = cart.products;
+        console.log("products",product);
+        let items = cart.products.item;
+        console.log("items",items);
+        let totalItems = product.length;
+        var total =0;
+        product.forEach((obj)=>{
+                total = total +  obj.item.price * obj.quantity;
+        })
+        let data = {
+            totalItems,
+            total
+        }
+        res.render('users/cartPage',{product,data});
+    } catch (error) {
+        console.log(error)
+    } 
 }
 
 const buyNow = async (req,res) =>{
@@ -224,7 +251,8 @@ const buyNow = async (req,res) =>{
         product = product[0];
         let user = req.session.user;
         res.render('users/singleView',{product,user});
-    } catch (error) {
+    } catch (error) 
+    {
         console.log(error)
     }
     // let qry = "select * from products where id = ?";
@@ -243,9 +271,9 @@ const buyNow = async (req,res) =>{
 }
 
 const checkOut = (req,res) =>{
-        let pid= req.params.id;
+    // let pid= req.params.id;
         let price = req.params.price;
-        console.log(pid,price);
+        console.log(price);
         var options = {
             amount: price,  // amount in the smallest currency unit
             currency: "INR",
