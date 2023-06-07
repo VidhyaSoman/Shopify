@@ -9,15 +9,15 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">                                                    
-                <a class="navbar-brand" href="#!" style="color: #24047a;">SHOPIFY</a>
+                <a class="navbar-brand" href="#!" style="color: #24047a; font-size:40px; text-shadow: 3px 3px 3px #412e75">SHOPIFY</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4" style="color: #24047a;">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!" style="color: #24047a; font-weight:bold">Home</a></li>
+                        {{!-- <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!" style="color: #24047a; font-weight:bold">Home</a></li> --}}
                         {{#if user}}
-                        <li class="nav-item"><a class="nav-link" href="/myOrder" style="color: #24047a; font-weight:bold;">My Orders</a></li>
+                        {{!-- <li class="nav-item"><a class="nav-link" href="/myOrder" style="color: #24047a; font-weight:bold;">My Orders</a></li> --}}
                         {{else}}
-                        <li class="nav-item"><a class="nav-link" href="/login" style="color: #24047a; font-weight:bold;">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/login" style="color: #24047a;  margin-left:780px; font-size:20px; width:100px; font-weight:bold">Sign in</a></li>
                         {{/if}}
                         {{#if user}}
                         <li class="nav-item dropdown">
