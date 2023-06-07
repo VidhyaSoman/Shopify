@@ -54,7 +54,7 @@
     let amount = document.getElementById('amount').innerHTML;
     var options = {
     "key": "rzp_test_9lippGn0j5aik2", // Enter the Key ID generated from the Dashboard
-    "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "amount": amount*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "Acme Corp",
     "description": "Test Transaction",
