@@ -95,7 +95,7 @@ const doLogin = async (req,res) =>
                 console.log("login error");
                 res.redirect('/login');
             }
-        }
+}
 
     // let {username} = req.body;
     // let {password} = req.body;
@@ -226,8 +226,6 @@ const cartPage = async (req,res) =>
         console.log(cart);
         let product = cart.products;
         console.log("products",product);
-        let items = cart.products.item;
-        console.log("items",items);
         let totalItems = product.length;
         var total =0;
         product.forEach((obj)=>{
@@ -275,7 +273,7 @@ const checkOut = (req,res) =>{
         let price = req.params.price;
         console.log(price);
         var options = {
-            amount: price,  // amount in the smallest currency unit
+            amount: price*100,  // amount in the smallest currency unit
             currency: "INR",
             receipt: "order_rcptid_11"
           };

@@ -16,7 +16,7 @@
     .main
     {
         width: 60%;
-        height: 310px;
+        height: 340px;
         box-shadow: rgba(23, 30, 104, 0.35) 0px 5px 15px;
         margin: auto;
         padding: 30px;
@@ -45,8 +45,8 @@
     <h2>Check Out</h2><br>
     <h3>Order Id : <span id="orderid">{{order.id}}</span></h3><br>
     <h3>Amount : <span id="amount">{{order.amount}}</span></h3>
-    <button onclick="payNow()" class="rzp-button">Pay with Razorpay</button>
-    <a href="/" class="btn btn-success">Explore New</a>
+    <button onclick="payNow()" class="rzp-button">Pay with Razorpay</button><br>
+    <center><a href="/" class="btn btn-success" style="background-color:rgb(45, 45, 155) ;">Explore New</a></center>
 </div>
 
 <script>
@@ -54,7 +54,7 @@
     let amount = document.getElementById('amount').innerHTML;
     var options = {
     "key": "rzp_test_9lippGn0j5aik2", // Enter the Key ID generated from the Dashboard
-    "amount": amount*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "Acme Corp",
     "description": "Test Transaction",
@@ -62,9 +62,6 @@
     "order_id": id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "handler": function (response){
         pay(response);
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature)
     },
     "prefill": {
         "name": "Gaurav Kumar",
