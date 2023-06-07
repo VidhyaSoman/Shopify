@@ -270,10 +270,10 @@ const buyNow = async (req,res) =>{
 
 const checkOut = (req,res) =>{
     // let pid= req.params.id;
-        let price = req.params.price;
+        let price = req.params.price * 100;
         console.log(price);
         var options = {
-            amount: price*100,  // amount in the smallest currency unit
+            amount: price,  // amount in the smallest currency unit
             currency: "INR",
             receipt: "order_rcptid_11"
           };

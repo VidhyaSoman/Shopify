@@ -39,19 +39,24 @@
         background-color: rgb(45, 45, 155);
         color: white;
     }
+    #amount{
+        display: none;
+    }
+    
 </style>
 <body>
 <div class="main">
     <h2>Check Out</h2><br>
     <h3>Order Id : <span id="orderid">{{order.id}}</span></h3><br>
-    <h3>Amount : <span id="amount">{{order.amount}}</span></h3>
+    <h3>Amount : <span id="amount">{{order.amount}}</span><span id="amounts"></span></h3>
     <button onclick="payNow()" class="rzp-button">Pay with Razorpay</button><br>
     <center><a href="/" class="btn btn-success" style="background-color:rgb(45, 45, 155) ;">Explore New</a></center>
 </div>
 
 <script>
     let id = document.getElementById('orderid').innerHTML;
-    let amount = document.getElementById('amount').innerHTML;
+    var  amount = document.getElementById('amount').innerHTML;
+    document.getElementById('amounts').innerHTML = amount/100;
     var options = {
     "key": "rzp_test_9lippGn0j5aik2", // Enter the Key ID generated from the Dashboard
     "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
