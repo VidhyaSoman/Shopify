@@ -8,6 +8,7 @@
 {{!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
 </script> --}}
     <title>Document</title>
+    <link rel="stylesheet" href="/stylesheets/sidebar.css">
 </head>
 <body>
     
@@ -25,7 +26,7 @@
     }
     h2{
         text-align: center;
-        color:  rgb(45, 45, 155);
+        color:  #24047a;
         font-weight: bolder;
         text-shadow: 2px 2px 2px rgb(45, 45, 155);    
         }
@@ -34,9 +35,8 @@
         padding: 10px;
         margin: auto;
         display: block;
-        width: 300px;
         border-radius: 5px;
-        background-color: rgb(45, 45, 155);
+        background-color: #24047a;
         color: white;
     }
     #amount{
@@ -45,12 +45,16 @@
     
 </style>
 <body>
+    <div class="nav">
+    <h4>SHOPIFY</h4>
+<a href="/" class="logout">Explore New</a>
+</div>
 <div class="main">
     <h2>Check Out</h2><br>
-    <h3>Order Id : <span id="orderid">{{order.id}}</span></h3><br>
-    <h3>Amount : <span id="amount">{{order.amount}}</span><span id="amounts"></span></h3>
+    <h5>Order Id : <span id="orderid">{{order.id}}</span></h5><br>
+    <h5>Amount : <span id="amount">{{order.amount}}</span><span id="amounts"></span></h5>
     <button onclick="payNow()" class="rzp-button">Pay with Razorpay</button><br>
-    <center><a href="/" class="btn btn-success" style="background-color:rgb(45, 45, 155);">Explore New</a></center>
+    {{!-- <center><a href="/" class="btn btn-success" style="background-color:#24047a;">Explore New</a></center> --}}
 </div>
 
 <script>

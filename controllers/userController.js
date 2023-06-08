@@ -129,6 +129,7 @@ const addtocart = async (req,res)=>
         }
         let cart = await cartModel.findOne({userId:user._id})
         if(cart){
+            console.log("add to cart");
             console.log(cart,"cart item details");
             cart.products.forEach(async obj => {
                 if(obj.item._id ==id){

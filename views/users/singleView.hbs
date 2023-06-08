@@ -1,9 +1,10 @@
+<link rel="stylesheet" href="/stylesheets/sidebar.css">
 
 <style>
     .main
     {
         width: 65%;
-        height: 300px;
+        height: 280px;
         box-shadow: rgba(23, 30, 104, 0.35) 0px 5px 15px;
         margin: auto;
         margin-top: 70px;
@@ -12,22 +13,35 @@
     }
     .imageDivision
     {
-        width: 50%;
+        width: 40%;
         height: 100%;
         padding: 20px;
     }
     .imageDivision img{
         height: 100%;
         width: 60%;
+        padding: 10px;
     }
     .contentDivision
     {
         padding: 20px;
     }
+    .btn-primary
+    {
+        background-color: #3f1c9e;
+        border:none
+    }
+    .btn-primary:hover
+    {
+        background-color: #24047a;
+    }
 </style>
 
-{{>navbar}}
-
+{{!-- {{>navbar}} --}}
+<div class="nav">
+    <h4>SHOPIFY</h4>
+<a href="/" class="logout">Back to Shopping</a>
+</div>
 <div class="main">
 <div class="imageDivision">
     <img src="/images/Products/{{product._id}}" alt="....">
@@ -37,7 +51,6 @@
     <h6>{{product.description}}</h6><br>
     <h3>{{product.price}}</h3><br>
     {{!-- <a href="/"><button class="bn632-hover bn28">Button</button></a> --}}
-    <a href="/checkout/{{product.price}}"><button class="btn btn-primary">Check Out</button></a>
-    <a href="/"><button class="btn btn-danger">Cancel</button></a>
+    <a href="/checkout/{{product.price}}"><button class="btn btn-primary">Check Out</button></a>  <span><a href="/"><button class="btn btn-danger">Cancel</button></a></span>
 </div>
 </div>
