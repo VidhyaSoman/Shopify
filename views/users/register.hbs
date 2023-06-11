@@ -28,6 +28,9 @@
                 <div class="input-field">
                     <span class="fas fa-lock p-2"></span>
                     <input type="password" placeholder="Confirm Password" required name="cpassword">
+                    {{#if alert}}
+                    <h6>Password and confirm password doesn't match</h6>
+                    {{/if}}
                 </div>
             </div>
             <input class="btn btn-block text-center my-3" type="submit" value="Sign Up">

@@ -70,10 +70,15 @@ const getRegisterPage = (req,res) => {
 
 const doRegister = async (req,res) => {
     console.log(req.body);
+    let {password} = req.body;
+    let {cpassword} = req.body;
     try {
+       if(password==cpassword)
+       {
        await userModel.create(req.body);
        console.log("user created");
        res.redirect('/login')
+    }
     } 
     catch (error) {
        console.log(error); 
@@ -115,132 +120,156 @@ const getMyOrder = (req,res) =>
 }
 
 
-const addtocart = async (req,res)=>
-{
-     let {user} = req.session;
-     let {id} = req.params;
+const addtocart = async (req, res) => {
+    let { user } = req.session;
+    let { id } = req.params;
     try {
-        let product = await productModel.findOne({_id: id});
+        let product = await productModel.findOne({ _id: id });
         product.id = id;
-        console.log(product,"product details");
-        let obj ={
-            item:product,
-            quantity:1
-        }
-        let cart = await cartModel.findOne({userId:user._id})
-        if(cart){
-            console.log("add to cart");
-            console.log(cart,"cart item details");
-            cart.products.forEach(async obj => {
-                if(obj.item._id ==id){
-                    console.log("Item found")
-                    var newqty = obj.quantity;
-                     newqty++;
-                     console.log(newqty);
-                    res.redirect('/')
+        console.log(product, "product details");
+        let obj = {
+            item: product,
+            quantity: 1
+        };
+        let cart = await cartModel.findOne({ userId: user._id });
+        if (cart) {
+            let itemFound = false;
+            for (let i = 0; i < cart.products.length; i++) {
+                if (cart.products[i].item._id == id) {
+                    console.log("Item found");
+                    await cartModel.findOneAndUpdate({
+                        "products.item._id": product._id
+                    },
+                        {
+                            $inc: { 'products.$.quantity': 1 }
+                        }
+                    )
+                    itemFound = true;
+                    break;
                 }
-                else{
-                    console.log("not found!")
-                    await cartModel.findOneAndUpdate({ userId: user._id },{$push: {products: obj}})
-                    res.redirect('/')
-                }  
-         });
-         }else{
+            }
+            if (!itemFound) {
+                console.log("Item not found!");
+                cart.products.push(obj);
+            }
+            await cart.save();
+            res.redirect('/');
+        } else {
             let cartObj = {
-                userId:user._id,
-                products:[obj]
-            } 
-            console.log("cart",cartObj)
+                userId: user._id,
+                products: [obj]
+            };
+            console.log("cart", cartObj);
             await cartModel.create(cartObj);
-            res.redirect('/')
-         }     
+            res.redirect('/');
         }
-        catch(error){
-            console.log(error)
-        }    
+    } catch (error) {
+        console.log(error);
     }
+};
 
 
 
-
-// const addtocart = async (req,res) =>
+// const addtocart = async (req,res)=>
 // {
-//     let {id} = req.params;
-//     console.log(id,"id addtocaty")
-//     let {user} = req.session;
-//     console.log(user,'user');
-    // try {
-    //     let product = await productModel.findOne({_id:id});
-    //     product.id = id;
-    //     let obj = {
-    //         item:product,
-    //         quantity: 1
-    //     }
-    //     let cart = await cartModel.findOne({userId: user._id})
-    //     if(cart)
-    //     {
-    //         let  proExist=0;
-    //         console.log(cart.products);  
-    //         cart.products.forEach(async(obj)=>{
-    //                 if(obj.item._id == id){
-    //                     console.log(obj.item._id,"item found!")
-    //                      proExist=1;
-    //                      console.log(obj.quantity,"qtyt...")
-    //                      var newqty = parseInt(obj.quantity)+ 1 ;
-    //                     let update = await cartModel.findOneAndUpdate({'products.item._id':id},{$set:{quantity:newqty}}) 
-    //                 }else{
-    //                     console.log(obj.item._id,"item not found!") 
-    //                             var  updation = await cartModel.findOneAndUpdate({ userId: user._id },
-    //                         {
-    //                             $push: {
-    //                                 products: obj
-    //                             }
-    //                         }
-    //                     )
-    //                     proExist=0;
-    //                 }
-    //         })
-      
-           
-    //     } 
-    //     else
-    //     {
-    //         let cartObj = {
-    //             userId : user._id,
-    //             products : [obj] 
-    //         }
-    //         console.log("cart",cartObj)
-    //         await cartModel.create(cartObj);
-    //         // res.redirect("/users/cart")
-    //     }
-    // } catch (error) {
-    //     console.log(error);
-    // }
+//      let {user} = req.session;
+//      let {id} = req.params;
+//     try {
+//         let product = await productModel.findOne({_id: id});
+//         product.id = id;
+//         console.log(product,"product details");
+//         let obj ={
+//             item:product,
+//             quantity:1
+//         }
+//         let cart = await cartModel.findOne({userId:user._id})
+//         if(cart){
+//             console.log("add to cart");
+//             console.log(cart,"cart item details");
+//             cart.products.forEach(async obj => {
+//                 if(obj.item._id ==id){
+//                     console.log("Item found")
+//                     var newqty = obj.quantity;
+//                      newqty++;
+//                      console.log(newqty);
+//                     res.redirect('/')
+//                 }
+//                 else{
+//                     console.log("not found!")
+//                     await cartModel.findOneAndUpdate({ userId: user._id },{$push: {products: obj}})
+//                     res.redirect('/')
+//                 }  
+//          });
+//          }else{
+//             let cartObj = {
+//                 userId:user._id,
+//                 products:[obj]
+//             } 
+//             console.log("cart",cartObj)
+//             await cartModel.create(cartObj);
+//             res.redirect('/')
+//          }     
+//         }
+//         catch(error){
+//             console.log(error)
+//         }    
+//     }
 
 
 
-const cartPage = async (req,res) =>
-{
-    let {user} = req.session;
+
+const cartPage = async (req, res) => {
+    let { user } = req.session;
     try {
-        let cart = await cartModel.findOne({userId:user._id});
+        let cart = await cartModel.findOne({ userId: user._id });
         console.log(cart);
-        let product = cart.products;
-        console.log("products",product);
-        let totalItems = product.length;
-        var total =0;
-        product.forEach((obj)=>{
-                total = total +  obj.item.price * obj.quantity;
-        })
+        let products = cart.products;
+        console.log("products", products);
+        let totalItems = products.length;
+        let totalPrice = 0;
+
+        products.forEach((obj) => {
+            totalPrice += obj.item.price * obj.quantity;
+        });
+
+        console.log(totalPrice, 'total price');
+
         let data = {
             totalItems,
-            total
-        }
-        res.render('users/cartPage',{product,data});
+            totalPrice
+        };
+
+        res.render('users/cartPage', { products, data });
     } catch (error) {
-        console.log(error)
-    } 
-}
+        console.log(error);
+    }
+};
+
+
+
+// const cartPage = async (req,res) =>
+// {
+//     let {user} = req.session;
+//     try {
+//         let cart = await cartModel.findOne({userId:user._id});
+//         console.log(cart);
+//         let product = cart.products;
+//         console.log("products",product);
+//         let totalItems = product.length;
+//         var total =0;
+//         product.forEach((obj)=>{
+//                 total = total +  obj.item.price * obj.quantity;
+//         })
+//         console.log(total,'total price');
+//         let data = {
+//             totalItems,
+//             total
+//         }
+//         res.render('users/cartPage',{product,data});
+//     } catch (error) {
+//         console.log(error)
+//     } 
+// }
 
 const buyNow = async (req,res) =>{
     let pid = req.params.id;
